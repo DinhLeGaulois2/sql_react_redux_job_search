@@ -1,16 +1,14 @@
-# Job Search Organizer
+# Job Search Organizer - Service with Authentication at all levels (Front-end, Back-end and Database) - From Scratch...
 
 ## Aim
 
 To build an entire application using 3-tier architecture using **React/Redux** as **UI**, **Sequlize** as ORM (**O**bject-**R**elational **M**apping) and **MySQL** to manage the database. Beside the main features, there are **validations** from the **UI** to the **database**.
 
 ## Technologies
-
-> 1. **UI** -->  **React/Redux**
-> 2. **UI - Server** --> **axios - ExpressJS**
-> 3. **Server** --> **Express/NodeJS**
-> 4. **Server - Database** --> **Sequelize - MySQL**
-> 5. **Database** --> **MySQL**
+> * **Security**: **JWT-simple**, **bcrypt-nodejs**, **passport** (**passport-jwt**, **passport-local**)
+> * **Front End**: **React-Redux**
+> * **Back End**: **Express/Node.js** + **Sequelize** (ORM)
+> * **Database**: **mySQL**
 
 ## The EER Diagram
 
@@ -33,29 +31,27 @@ As long as all "***Required***" fields are empty, we could not submit the form (
 ![alt text](assets/img/update.jpg)
 
 ## Execution
+### You have to create a file "**config.js**" (server/config.js) to contain configuration's parameters that we want to keep secret, for now, we need
 
-### Setting
-I - Create a **Database** with the name of "**job_search_organizer**" then enter the "**password**" of your ***Database*** in the file [**index.js**](server/models/index.js)
+```
+module.exports = {
+    secret: XXXXXXXXXXXXXXXXXX,    
+    db_pwd: YYYYYYYYYYYYYYYYYY
+};
 
-II - Create **tables** for the ***database*** by setting the [**server.js**](server.js) with "**({ force: true })**"
+// "secret" is the "secret" to create the "TOKEN"
+// "db_pwd" is the password for your database (that you created) 
+```
 
-![alt text](assets/img/server.jpg)
-
-### Executing
-
-I - **Database**: set the ***database*** to "**user**" (don't forget to provide the **password** of your DB in the file [**index.js**](server/models/index.js))
-
-II - **Server**: start your server in your [**Git Bash**](https://git-scm.com/downloads) on the same folder of your [**server.js**](server.js) file. Enter the command
-
-> npm install
-
-to install the dependencies. Following by to start the ***server***:
-
-> npm run build
-
-III - **Client** - Open your favorite Internet Brower (**Chrome**, **Firefox**, **IE**, etc.) and enter in the address bar
-
-> localhost:3000
+> The project is build as a 3-tier architecture (fullstack), and the three parts was built to be ready to be put on different machines (which could be in different continents). So, we need to run 3 parts independently, in order: **database**, then **server** then **user interface**.
+>
+> 1 - You need to create your database with the name '**job_search_organizer**' (enter the password of **YOUR** database).
+>
+> 2 - Open a terminal, and execute (in the folder "**server**"): **npm install** (to install **dependencies**). Then: **npm run dev** to start the server.
+> 
+> 3 - Open ANOTHER termimal, and execute (in the folder "**client**"): **npm install** (to install **dependencies**). Then: **npm run start** to start the **user interface**.
+>
+> 4 - Open your web browser (***Firefox***, ***Chrome***, etc.) then, enter: **localhost:3000**
 
 
 ---------------
