@@ -2,7 +2,7 @@
 
 // the Object from the library ...
 var Sequelize = require('sequelize');
-var conf = require('../MY_PRIVATE_FOLDER/config_params')
+var conf = require('../config')
 
 var db = {};
 
