@@ -1,8 +1,8 @@
 import jobSearchCst from '../constants/jobSearchCst'
 
-import jobDBCst from '../../server/constants/jobDBCsts'
+import { SERVER_CST } from './types'
 
-const jobSearchReducer = (state = {
+const jobDisplayReducer = (state = {
     jobs: [],
     jobs2Display: [],
     updateId: -1,
@@ -10,13 +10,6 @@ const jobSearchReducer = (state = {
     status: jobSearchCst.JOB_ADD
 }, action) => {
     switch (action.type) {
-        case jobSearchCst.JOB_ADD: {
-            return Object.assign({}, state, {
-                jobs: action.payload,
-                jobs2Display: [],
-                status: jobSearchCst.JOB_ADD
-            })
-        }
         case jobSearchCst.JOB_UPDATE: {
             return Object.assign({}, state, {
                 updateId: action.payload,
@@ -54,7 +47,7 @@ const jobSearchReducer = (state = {
         }
         case jobSearchCst.JOB_SET_PENDING: {
             return Object.assign({}, state, {
-                jobs2Display: state.jobs.filter(a => a.job.status == jobDBCst.JOB_STATUS_PENDING ? a : null),
+                jobs2Display: state.jobs.filter(a => a.job.status == SERVER_CST.JOB_STATUS_PENDING ? a : null),
                 previousStatus: ((state.status == jobSearchCst.JOB_DISPLAY_ONE) || (state.status == jobSearchCst.JOB_UPDATE)) ? state.previousStatus : state.status,
                 updateId: -1,
                 status: jobSearchCst.JOB_SET_PENDING
@@ -62,7 +55,7 @@ const jobSearchReducer = (state = {
         }
         case jobSearchCst.JOB_SET_MISSED: {
             return Object.assign({}, state, {
-                jobs2Display: state.jobs.filter(a => a.job.status == jobDBCst.JOB_STATUS_MISSED ? a : null),
+                jobs2Display: state.jobs.filter(a => a.job.status == SERVER_CST.JOB_STATUS_MISSED ? a : null),
                 previousStatus: ((state.status == jobSearchCst.JOB_DISPLAY_ONE) || (state.status == jobSearchCst.JOB_UPDATE)) ? state.previousStatus : state.status,
                 updateId: -1,
                 status: jobSearchCst.JOB_SET_MISSED
@@ -85,8 +78,8 @@ const jobSearchReducer = (state = {
                 status: jobSearchCst.JOB_SET_RECENT_FIRST
             })
         }
+        default: return state
     }
-    return state;
 }
 
-export default jobSearchReducer
+export default jobDisplayReducer

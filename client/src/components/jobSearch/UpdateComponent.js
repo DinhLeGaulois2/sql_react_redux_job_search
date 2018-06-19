@@ -1,29 +1,35 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { reduxForm, Field } from 'redux-form'
-import PropTypes from 'prop-types'
+import actions from '../../actions/jobSearchAction'
+import requireAuth from '../../components/requireAuth';
+import { compose } from 'redux'
 
 import { renderTextareaField } from '../../common/reduxForm/renderField'
 
-let JobSearchUpdateComponent = ({ handleSubmit, invalid, submitting, reset, onClickSetUpdateDone }) => (
-    <div style={{ 'backgroundColor': 'white' }} className="jobdetails">
-        <form onSubmit={handleSubmit(onClickSetUpdateDone)}>
-            <div>
-                <Field name="comment" component={renderTextareaField} placeholder="Comment" /><br />
-                <h3>Pending: <Field name="isStatusPending" component="input" type="checkbox" /></h3>
-            </div>
-            <hr />
-            <p align="center"><button type="submit" className="btnSubmit" disabled={invalid || submitting}>Submit</button>&nbsp;&nbsp;&nbsp;
+class JobSearchUpdateComponent extends React.Component {
+    render() {
+        const { handleSubmit, invalid, submitting, reset, setUpdateDone } = this.props
+        return (
+            <div style={{ 'backgroundColor': 'white' }} className="jobdetails">
+                <form onSubmit={handleSubmit(setUpdateDone)}>
+                    <div>
+                        <Field name="comment" component={renderTextareaField} placeholder="Comment" /><br />
+                        <h3>Pending: <Field name="isStatusPending" component="input" type="checkbox" /></h3>
+                    </div>
+                    <hr />
+                    <p align="center"><button type="submit" className="btnSubmit" disabled={invalid || submitting}>Submit</button>&nbsp;&nbsp;&nbsp;
                 <button type="button" className="btnSubmit" disabled={submitting} onClick={reset}>Clear Values</button>
-            </p>
-        </form>
-    </div>
-)
-
+                    </p>
+                </form>
+            </div>
+        )
+    }
+}
 
 
 JobSearchUpdateComponent.propTypes = {
-    onClickSetUpdateDone: PropTypes.func.isRequired,
+    setUpdateDone: PropTypes.func.isRequired,
 };
 
 JobSearchUpdateComponent = reduxForm({
@@ -38,4 +44,9 @@ JobSearchUpdateComponent = connect(
         }
     })
 )(JobSearchUpdateComponent)
-export default JobSearchUpdateComponent
+export default compose(
+    connect(null, actions),
+    reduxForm({
+        form: 'jobUpdateForm'
+    })
+)(requireAuth(JobSearchUpdateComponent))
