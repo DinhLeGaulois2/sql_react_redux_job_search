@@ -4,9 +4,6 @@ import requireAuth from '../requireAuth'
 import '../HeaderStyle.css';
 
 import DisplayAllComponent from './DisplayAllComponent'
-import DisplayMissedComponent from './DisplayMissedComponent'
-import DisplayPendingComponent from './DisplayPendingComponent'
-import DisplayRecentFirstComponent from './DisplayRecentFirstComponent'
 
 class DisplayUIComponent extends React.Component {
     render() {
@@ -20,14 +17,16 @@ class DisplayUIComponent extends React.Component {
                         <NavLink to={`${match.url}/missed`} className="navLink" activeStyle={{ color: 'blue', fontSize: 'bold' }}>Missed</NavLink>
                         <NavLink to={`${match.url}/pending`} className="navLink" activeStyle={{ color: 'blue', fontSize: 'bold' }}>Pending</NavLink>
                         <NavLink to={`${match.url}/recent`} className="navLink" activeStyle={{ color: 'blue', fontSize: 'bold' }}>Most Recents First</NavLink>
+                        <NavLink to={`${match.url}/bycompanyname`} className="navLink" activeStyle={{ color: 'blue', fontSize: 'bold' }}>By Company Names</NavLink>
                     </p>
                     <br />
                 </div>
     
                 <Route path={`${match.url}/all`} exact component={DisplayAllComponent} />
-                <Route path={`${match.url}/missed`} exact component={DisplayMissedComponent} />
-                <Route path={`${match.url}/pending`} exact component={DisplayPendingComponent} />
-                <Route path={`${match.url}/recent`} exact component={DisplayRecentFirstComponent} />
+                <Route path={`${match.url}/missed`} exact component={DisplayAllComponent} />
+                <Route path={`${match.url}/pending`} exact component={DisplayAllComponent} />
+                <Route path={`${match.url}/recent`} exact component={DisplayAllComponent} />
+                <Route path={`${match.url}/bycompanyname`} exact component={DisplayAllComponent} />
             </div>
         )
     }

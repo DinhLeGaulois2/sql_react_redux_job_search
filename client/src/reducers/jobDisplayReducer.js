@@ -1,81 +1,74 @@
 import jobSearchCst from '../constants/jobSearchCst'
 
-import { SERVER_CST } from './types'
+import { SERVER_CST } from '../actions/types'
+
+const getGoodList = (list, op) => {
+    let result = []
+    if(op === jobSearchCst.JOB_DISPLAY_MISSED){ result = list.filter(a => a.job.status === SERVER_CST.JOB_DISPLAY_MISSED ? a : null)}    
+    else if(op === jobSearchCst.JOB_DISPLAY_PENDING){ result = list.filter(a => a.job.status === SERVER_CST.JOB_DISPLAY_PENDING ? a : null)} 
+    else result = Object.assign({}, list)
+    return result
+}
 
 const jobDisplayReducer = (state = {
-    jobs: [],
-    jobs2Display: [],
-    updateId: -1,
-    previousStatus: jobSearchCst.JOB_ADD,
-    status: jobSearchCst.JOB_ADD
+    jobs: [], // All Jobs
+    jobs2Display: [], // Selected Jobs (missing, pending, most recent first, etc.)
+    status: "",
+    isList: true
 }, action) => {
     switch (action.type) {
+        case jobSearchCst.SET_DISPLAY_NOT_LIST:{
+            return state.isList = false
+        }
+        case jobSearchCst.JOB_ADD: {
+            return Object.assign({}, state, {
+                jobs: action.payload,
+                jobs2Display: getGoodList(action.payload, state.status),
+                isList: true
+            })
+        }
         case jobSearchCst.JOB_UPDATE: {
             return Object.assign({}, state, {
-                updateId: action.payload,
-                status: jobSearchCst.JOB_UPDATE
+                jobs: action.payload,
+                jobs2Display: getGoodList(action.payload, state.status),
+                isList: true
             })
         }
-        case jobSearchCst.JOB_UPDATE_CANCEL: {
-            return Object.assign({}, state, {
-                updateId: -1,
-                status: state.previousStatus
-            })
-        }
-        case jobSearchCst.JOB_DISPLAY_LIST: {
+        case jobSearchCst.JOB_DISPLAY_ALL: {
             return Object.assign({}, state, {
                 jobs: action.payload,
                 jobs2Display: action.payload,
-                updateId: -1,
-                previousStatus: ((state.status == jobSearchCst.JOB_DISPLAY_ONE) || (state.status == jobSearchCst.JOB_UPDATE)) ? state.previousStatus : state.status,
-                status: jobSearchCst.JOB_DISPLAY_LIST
+                status: jobSearchCst.JOB_DISPLAY_LIST,
+                isList: true
             })
         }
-        case jobSearchCst.JOB_DISPLAY_ONE: {
+        case jobSearchCst.JOB_DISPLAY_PENDING: {
             return Object.assign({}, state, {
-                jobs2Display: state.jobs.filter(a => a.job.id == action.payload ? a : null),
-                updateId: -1,
-                previousStatus: ((state.status == jobSearchCst.JOB_DISPLAY_ONE) || (state.status == jobSearchCst.JOB_UPDATE)) ? state.previousStatus : state.status,
-                status: jobSearchCst.JOB_DISPLAY_ONE
+                jobs2Display: state.jobs.filter(a => a.job.status === SERVER_CST.JOB_DISPLAY_PENDING ? a : null),
+                status: jobSearchCst.JOB_DISPLAY_PENDING,
+                isList: true
             })
         }
-        case jobSearchCst.JOB_DISPLAY_ONE_CLOSE: {
+        case jobSearchCst.JOB_DISPLAY_MISSED: {
             return Object.assign({}, state, {
-                status: state.previousStatus,
-                updateId: -1,
+                jobs2Display: state.jobs.filter(a => a.job.status === SERVER_CST.JOB_DISPLAY_MISSED ? a : null),
+                status: jobSearchCst.JOB_DISPLAY_MISSED,
+                isList: true
             })
         }
-        case jobSearchCst.JOB_SET_PENDING: {
-            return Object.assign({}, state, {
-                jobs2Display: state.jobs.filter(a => a.job.status == SERVER_CST.JOB_STATUS_PENDING ? a : null),
-                previousStatus: ((state.status == jobSearchCst.JOB_DISPLAY_ONE) || (state.status == jobSearchCst.JOB_UPDATE)) ? state.previousStatus : state.status,
-                updateId: -1,
-                status: jobSearchCst.JOB_SET_PENDING
-            })
-        }
-        case jobSearchCst.JOB_SET_MISSED: {
-            return Object.assign({}, state, {
-                jobs2Display: state.jobs.filter(a => a.job.status == SERVER_CST.JOB_STATUS_MISSED ? a : null),
-                previousStatus: ((state.status == jobSearchCst.JOB_DISPLAY_ONE) || (state.status == jobSearchCst.JOB_UPDATE)) ? state.previousStatus : state.status,
-                updateId: -1,
-                status: jobSearchCst.JOB_SET_MISSED
-            })
-        }
-        case jobSearchCst.JOB_SET_SORT_COMPANY_BY_NAME: {
+        case jobSearchCst.JOB_DISPLAY_SORT_COMPANY_BY_NAME: {
             return Object.assign({}, state, {
                 jobs2Display: action.payload,
-                previousStatus: ((state.status == jobSearchCst.JOB_DISPLAY_ONE) || (state.status == jobSearchCst.JOB_UPDATE)) ? state.previousStatus : state.status,
-                updateId: -1,
-                status: jobSearchCst.JOB_SET_SORT_COMPANY_BY_NAME
+                status: jobSearchCst.JOB_DISPLAY_SORT_COMPANY_BY_NAME,
+                isList: true
             })
         }
-        case jobSearchCst.JOB_SET_RECENT_FIRST: {
+        case jobSearchCst.JOB_DISPLAY_RECENT_FIRST: {
             return Object.assign({}, state, {
                 jobs: action.payload,
                 jobs2Display: action.payload,
-                previousStatus: ((state.status == jobSearchCst.JOB_DISPLAY_ONE) || (state.status == jobSearchCst.JOB_UPDATE)) ? state.previousStatus : state.status,
-                updateId: -1,
-                status: jobSearchCst.JOB_SET_RECENT_FIRST
+                status: jobSearchCst.JOB_DISPLAY_RECENT_FIRST,
+                isList: true
             })
         }
         default: return state

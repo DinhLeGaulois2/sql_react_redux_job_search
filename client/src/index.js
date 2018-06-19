@@ -8,14 +8,14 @@ import reduxThunk from 'redux-thunk';
 import reducers from './reducers';
 import App from './components/App';
 import Welcome from './components/Welcome';
-import MainMenuComponent from './components/employees_organizer/MainMenuComponent'
+import MainMenuComponent from './components/jobSearch/MainMenuComponent'
 import Signup from './components/auth/Signup';
 import Signout from './components/auth/Signout';
 import Signin from './components/auth/Signin';
 
 const store = createStore(
   reducers,
-  {
+  { // initiation of "auth's" value
     auth: { authenticated: localStorage.getItem('token') }
   },
   applyMiddleware(reduxThunk)

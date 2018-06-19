@@ -25,7 +25,7 @@ class Header extends Component {
   render() {
     return (
       <div className="header" style={{ "backgroundColor": "black" }}>
-        <span style={{ color: "black", backgroundColor: "white", fontSize: "1.5em", padding: '0px 10px', fontWeight: "bold" }}>Employees Organizer</span>
+        <span style={{ color: "black", backgroundColor: "white", fontSize: "1.5em", padding: '0px 10px', fontWeight: "bold" }}>Jobs Organizer</span>
 
         {this.renderNavLinks()}
       </div>

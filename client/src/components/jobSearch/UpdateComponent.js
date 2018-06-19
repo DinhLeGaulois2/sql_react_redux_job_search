@@ -27,10 +27,9 @@ class JobSearchUpdateComponent extends React.Component {
     }
 }
 
+const MapStateToProps = (state) => {
 
-JobSearchUpdateComponent.propTypes = {
-    setUpdateDone: PropTypes.func.isRequired,
-};
+}
 
 JobSearchUpdateComponent = reduxForm({
     form: 'jobUpdateForm'
@@ -45,7 +44,7 @@ JobSearchUpdateComponent = connect(
     })
 )(JobSearchUpdateComponent)
 export default compose(
-    connect(null, actions),
+    connect(MapStateToProps, actions),
     reduxForm({
         form: 'jobUpdateForm'
     })

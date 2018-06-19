@@ -3,7 +3,7 @@ import requireAuth from '../requireAuth'
 import { Route, NavLink } from "react-router-dom";
 import '../HeaderStyle.css';
 
-import JobSearchAddComponent from './AddComponent'
+import AddComponent from './AddComponent'
 
 class AddUIComponent extends React.Component {
     render() {
@@ -17,7 +17,7 @@ class AddUIComponent extends React.Component {
                     </p>
                     <br />
                 </div>
-                <Route path={`${match.url}/job`} exact component={JobSearchAddComponent} />
+                <Route path={`${match.url}/job`} exact component={AddComponent} />
             </div>
         )
     }

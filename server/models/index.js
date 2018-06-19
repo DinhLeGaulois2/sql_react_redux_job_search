@@ -9,7 +9,7 @@ var db = {};
 var DBInfo = {
     username: "root",
     password: conf.db_pwd,   // <----------------- Your Password here
-    database: "job_search_organizer",
+    database: "job_search_organizer_bis",
     host: "127.0.0.1",
     dialect: "mysql",
 };

@@ -8,18 +8,18 @@ const dateAndTime = (expr) => {
     let extension = "AM"
     let v = expr.split("at").map(a => a.trim())
     let d = v[0].split("-") //date
-    d[1] = d[1].length == 1 ? "0" + d[1] : d[1]
-    d[2] = d[2].length == 1 ? "0" + d[2] : d[2]
+    d[1] = d[1].length === 1 ? "0" + d[1] : d[1]
+    d[2] = d[2].length === 1 ? "0" + d[2] : d[2]
     let t = v[1].split(":")
-    if (parseInt(t[0]) < 12){
-        if(parseInt(t[0]) < 10)
+    if (parseInt(t[0], 10) < 12){
+        if(parseInt(t[0], 10) < 10)
             t[0] = "0" + t[0]
     }
     else{
         extension = "PM"
         t[0] -= 12
     }
-    t[1] = t[1].length == 1 ? "0" + t[1] : t[1]
+    t[1] = t[1].length === 1 ? "0" + t[1] : t[1]
 
     return d[0] + "-" + d[1] + "-" + d[2] + " at " + t[0] + ":" + t[1] + " " + extension
 }
@@ -38,14 +38,14 @@ const compare = (a, b) => {
 const date24hTime = (data) => {    
     let v = data.split("at").map(a => a.trim())
     let d = v[0].split("-") //date
-    d[1] = d[1].length == 1 ? "0" + d[1] : d[1]
-    d[2] = d[2].length == 1 ? "0" + d[2] : d[2]
+    d[1] = d[1].length === 1 ? "0" + d[1] : d[1]
+    d[2] = d[2].length === 1 ? "0" + d[2] : d[2]
     let t = v[1].split(":")
     let e = t[1].split(" ").map(a => a.trim())
-    if(e[1] == "PM") t[0] = (parseInt(t[0]) + 12).toString();
-    else t[0] = parseInt(t[0]).toString().length ==1? "0" +  parseInt(t[0]).toString() : parseInt(t[0]).toString()// deleting too many 0 as prefix
+    if(e[1] === "PM") t[0] = (parseInt(t[0], 10) + 12).toString();
+    else t[0] = parseInt(t[0], 10).toString().length === 1? "0" +  parseInt(t[0], 10).toString() : parseInt(t[0], 10).toString()// deleting too many 0 as prefix
 
-    e[0] = e[0].length == 1 ? "0" + e[0] : e[0]
+    e[0] = e[0].length === 1 ? "0" + e[0] : e[0]
     return d[0] + "-" + d[1] + "-" + d[2] + " at " + t[0] + ":" + e[0]
 }
 
@@ -69,8 +69,8 @@ const jobSearchAction = {
         return (dispatch, getState) => {
             let st = getState()
             switch (st.jobs.previousStatus) {
-                case jobSearchCst.JOB_DISPLAY_LIST: {
-                    dispatch({ type: jobSearchCst.JOB_DISPLAY_LIST, payload: st.jobs.jobs })
+                case jobSearchCst.JOB_DISPLAY_ALL: {
+                    dispatch({ type: jobSearchCst.JOB_DISPLAY_ALL, payload: st.jobs.jobs })
                     break
                 }
                 case jobSearchCst.JOB_SET_PENDING: {
@@ -96,8 +96,10 @@ const jobSearchAction = {
     setUpdateDone: (data) => {
         return (dispatch, getState) => {
             let obj = getState().jobs.jobs2Display[0]
-            let st = getState().jobs
-            obj.job.status = data.isStatusPending == true ? "JOB_STATUS_PENDING" : "JOB_STATUS_MISSED"
+            let st = getState().jobs.jobs
+            //KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
+            console.log("client, actions, setUpdateDone, st: " + JSON.stringify(st, null, 5))
+            obj.job.status = data.isStatusPending === true ? "JOB_DISPLAY_PENDING" : "JOB_DISPLAY_MISSED"
             obj.job.comment = data.comment
             axios.put('http://localhost:3090/api/job/update/', { id: obj.job.id, comment: obj.job.comment, status: obj.job.status }, {
                 headers: {
@@ -105,31 +107,31 @@ const jobSearchAction = {
                 }
             })
                 .then(result => {
-                    st.jobs = st.jobs.map(a => a.job.id == obj.jobid ? job : a)
-                    if (st.previousStatus == jobSearchCst.JOB_DISPLAY_LIST)
-                        dispatch({ type: jobSearchCst.JOB_DISPLAY_LIST, payload: st.jobs })
+                    // st.jobs = st.jobs.map(a => a.job.id == obj.jobid ? job : a)
+                    // if (st.previousStatus == jobSearchCst.JOB_DISPLAY_ALL)
+                    //     dispatch({ type: jobSearchCst.JOB_DISPLAY_ALL, payload: st.jobs })
 
-                    switch (st.previousStatus) {
-                        case jobSearchCst.JOB_DISPLAY_LIST: {
-                            dispatch({ type: jobSearchCst.JOB_DISPLAY_LIST, payload: st.jobs })
-                            break
-                        }
-                        case jobSearchCst.JOB_SET_PENDING: {
-                            dispatch({ type: jobSearchCst.JOB_SET_PENDING })
-                            break
-                        }
-                        case jobSearchCst.JOB_SET_MISSED: {
-                            dispatch({ type: jobSearchCst.JOB_SET_MISSED })
-                            break
-                        }
-                        case jobSearchCst.JOB_SET_RECENT_FIRST: {
-                            dispatch({
-                                type: jobSearchCst.JOB_SET_RECENT_FIRST,
-                                payload: st.jobs
-                            })
-                            break
-                        }
-                    }
+                    // switch (st.previousStatus) {
+                    //     case jobSearchCst.JOB_DISPLAY_ALL: {
+                    //         dispatch({ type: jobSearchCst.JOB_DISPLAY_ALL, payload: st.jobs })
+                    //         break
+                    //     }
+                    //     case jobSearchCst.JOB_SET_PENDING: {
+                    //         dispatch({ type: jobSearchCst.JOB_SET_PENDING })
+                    //         break
+                    //     }
+                    //     case jobSearchCst.JOB_SET_MISSED: {
+                    //         dispatch({ type: jobSearchCst.JOB_SET_MISSED })
+                    //         break
+                    //     }
+                    //     case jobSearchCst.JOB_SET_RECENT_FIRST: {
+                    //         dispatch({
+                    //             type: jobSearchCst.JOB_SET_RECENT_FIRST,
+                    //             payload: st.jobs
+                    //         })
+                    //         break
+                    //     }
+                    // }
                     dispatch({ type: jobSearchCst.JOB_UPDATE_CANCEL })
                 })
                 .catch(err => console.log("setUpdate: " + err))
@@ -140,10 +142,10 @@ const jobSearchAction = {
         let ob = {
             job: {
                 title: values.j_title,
-                description: values.j_description == undefined ? "" : values.j_description,
-                comment: values.j_comment == undefined ? "" : values.j_comment,
+                description: values.j_description === undefined ? "" : values.j_description,
+                comment: values.j_comment === undefined ? "" : values.j_comment,
                 appliedAt: dateAndTime(values.j_appliedAt),
-                status: SERVER_CST.JOB_STATUS_PENDING,
+                status: SERVER_CST.JOB_DISPLAY_PENDING,
                 url: values.j_url
             },
             company: {
@@ -156,7 +158,7 @@ const jobSearchAction = {
             }
         }
 
-        if (values.contactPerson == undefined) {
+        if (values.contactPerson === undefined) {
             ob.contactPerson = {
                 name: "",
                 email: "",
@@ -165,9 +167,9 @@ const jobSearchAction = {
         }
         else {
             ob.contactPerson = {
-                name: values.cont_name == undefined ? "" : values.cont_name,
-                email: values.cont_email == undefined ? "" : values.cont_email,
-                phone: values.cont_phone == undefined ? "" : values.cont_phone,
+                name: values.cont_name === undefined ? "" : values.cont_name,
+                email: values.cont_email === undefined ? "" : values.cont_email,
+                phone: values.cont_phone === undefined ? "" : values.cont_phone,
             }
         }
 
@@ -195,7 +197,7 @@ const jobSearchAction = {
 
     setUI2Display: (status) => {
         return (dispatch) => {
-            if (status == jobSearchCst.JOB_DISPLAY_LIST) {
+            if (status ===jobSearchCst.JOB_DISPLAY_ALL) {
                 axios.get('http://localhost:3090/api/job/get/all', {
                     headers: {
                         'authorization': localStorage.getItem('token')
@@ -203,18 +205,18 @@ const jobSearchAction = {
                 })
                     .then(result => {
                         dispatch({
-                            type: jobSearchCst.JOB_DISPLAY_LIST,
+                            type: jobSearchCst.JOB_DISPLAY_ALL,
                             payload: result.data
                         })
                     })
             }
-            else dispatch({ type: jobSearchCst.JOB_DISPLAY_LIST, payload: status })
+            else dispatch({ type: jobSearchCst.JOB_DISPLAY_ALL, payload: status })
         }
     },
 
     setShowAJob: (jobId) => {
         return (dispatch) => {
-            dispatch({ type: jobSearchCst.JOB_DISPLAY_ONE, payload: jobId })
+            dispatch({ type: jobSearchCst.SET_DISPLAY_NOT_LIST, payload: jobId })
         }
     },
 
@@ -240,8 +242,8 @@ const jobSearchAction = {
         return (dispatch, getState) => {
             let st = getState()
             switch (st.jobs.previousStatus) {
-                case jobSearchCst.JOB_DISPLAY_LIST: {
-                    dispatch({ type: jobSearchCst.JOB_DISPLAY_LIST, payload: st.jobs.jobs })
+                case jobSearchCst.JOB_DISPLAY_ALL: {
+                    dispatch({ type: jobSearchCst.JOB_DISPLAY_ALL, payload: st.jobs.jobs })
                     break
                 }
                 case jobSearchCst.JOB_SET_PENDING: {
@@ -259,7 +261,7 @@ const jobSearchAction = {
                     })
                     break
                 }
-                default: dispatch({ type: jobSearchCst.JOB_DISPLAY_ONE_CLOSE })
+                default: dispatch({ type: jobSearchCst.SET_DISPLAY_NOT_LIST_CLOSE })
             }
         }
     },
@@ -301,7 +303,7 @@ const jobSearchAction = {
             })
                 .then(result => {
                     dispatch({
-                        type: jobSearchCst.JOB_DISPLAY_LIST,
+                        type: jobSearchCst.JOB_DISPLAY_ALL,
                         payload: result.data
                     })
                 })
