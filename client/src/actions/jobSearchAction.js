@@ -99,7 +99,11 @@ const jobSearchAction = {
             let st = getState().jobs
             obj.job.status = data.isStatusPending == true ? "JOB_STATUS_PENDING" : "JOB_STATUS_MISSED"
             obj.job.comment = data.comment
-            axios.put('/api/job/update/', { id: obj.job.id, comment: obj.job.comment, status: obj.job.status })
+            axios.put('http://localhost:3090/api/job/update/', { id: obj.job.id, comment: obj.job.comment, status: obj.job.status }, {
+                headers: {
+                    'authorization': localStorage.getItem('token')
+                }
+            })
                 .then(result => {
                     st.jobs = st.jobs.map(a => a.job.id == obj.jobid ? job : a)
                     if (st.previousStatus == jobSearchCst.JOB_DISPLAY_LIST)
@@ -168,9 +172,17 @@ const jobSearchAction = {
         }
 
         return dispatch => {
-            axios.post("/api/job/add", ob)
+            axios.post('/api/job/add', ob, {
+                headers: {
+                    'authorization': localStorage.getItem('token')
+                }
+            })
                 .then(data => {
-                    axios.get('/api/job/get/all')
+                    axios.get('http://localhost:3090/api/job/get/all', {
+                        headers: {
+                            'authorization': localStorage.getItem('token')
+                        }
+                    })
                         .then(result => {
                             dispatch({
                                 type: jobSearchCst.JOB_ADD,
@@ -184,7 +196,11 @@ const jobSearchAction = {
     setUI2Display: (status) => {
         return (dispatch) => {
             if (status == jobSearchCst.JOB_DISPLAY_LIST) {
-                axios.get('/api/job/get/all')
+                axios.get('http://localhost:3090/api/job/get/all', {
+                    headers: {
+                        'authorization': localStorage.getItem('token')
+                    }
+                })
                     .then(result => {
                         dispatch({
                             type: jobSearchCst.JOB_DISPLAY_LIST,
@@ -262,7 +278,11 @@ const jobSearchAction = {
 
     set2ShowRecentFirst: () => {
         return (dispatch) => {
-            axios.get('/api/job/get/recent')
+            axios.get('http://localhost:3090/api/job/get/recent', {
+                headers: {
+                    'authorization': localStorage.getItem('token')
+                }
+            })
                 .then(result => {
                     dispatch({
                         type: jobSearchCst.JOB_SET_RECENT_FIRST,
@@ -274,7 +294,11 @@ const jobSearchAction = {
 
     set2ShowAll: () => {
         return (dispatch) => {
-            axios.get('/api/job/get/all')
+            axios.get('http://localhost:3090/api/job/get/all', {
+                headers: {
+                    'authorization': localStorage.getItem('token')
+                }
+            })
                 .then(result => {
                     dispatch({
                         type: jobSearchCst.JOB_DISPLAY_LIST,
