@@ -59,8 +59,7 @@ const correctAppliedAt = (data) => {
 
 const jobSearchAction = {
     setUpdate: (jobId) => {
-        return (dispatch, getState) => {
-            let st = getState().jobs
+        return (dispatch) => {
             dispatch({ type: jobSearchCst.JOB_UPDATE, payload: jobId })
         }
     },
@@ -96,10 +95,8 @@ const jobSearchAction = {
     setUpdateDone: (data) => {
         return (dispatch, getState) => {
             let obj = getState().jobs.jobs2Display[0]
-            let st = getState().jobs.jobs
-            //KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
-            console.log("client, actions, setUpdateDone, st: " + JSON.stringify(st, null, 5))
-            obj.job.status = data.isStatusPending === true ? "JOB_DISPLAY_PENDING" : "JOB_DISPLAY_MISSED"
+            // let st = getState().jobs.jobs
+            obj.job.status = data.isStatusPending === true ? SERVER_CST.JOB_DISPLAY_PENDING : SERVER_CST.JOB_DISPLAY_MISSED
             obj.job.comment = data.comment
             axios.put('http://localhost:3090/api/job/update/', { id: obj.job.id, comment: obj.job.comment, status: obj.job.status }, {
                 headers: {
@@ -139,6 +136,9 @@ const jobSearchAction = {
     },
 
     addNewJob: (values) => {
+        //KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
+        console.log("client, actions, addnewJob, " + JSON.stringify(SERVER_CST, null, 5))
+        console.log("client, actions, addnewJob, values: " + JSON.stringify(values, null, 5))
         let ob = {
             job: {
                 title: values.j_title,
@@ -174,7 +174,7 @@ const jobSearchAction = {
         }
 
         return dispatch => {
-            axios.post('/api/job/add', ob, {
+            axios.post('http://localhost:3090/api/job/add', ob, {
                 headers: {
                     'authorization': localStorage.getItem('token')
                 }
