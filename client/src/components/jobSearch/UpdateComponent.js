@@ -27,10 +27,6 @@ class JobSearchUpdateComponent extends React.Component {
     }
 }
 
-const MapStateToProps = (state) => {
-
-}
-
 JobSearchUpdateComponent = reduxForm({
     form: 'jobUpdateForm'
 })(JobSearchUpdateComponent)
@@ -39,12 +35,12 @@ JobSearchUpdateComponent = connect(
     state => ({
         initialValues: {
             comment: state.jobs.jobs2Display[0].job.comment,
-            isStatusPending: state.jobs.jobs2Display[0].job.status == "JOB_STATUS_PENDING" ? true : false
+            isStatusPending: state.jobs.jobs2Display[0].job.status == "STATUS_PENDING" ? true : false
         }
     })
 )(JobSearchUpdateComponent)
 export default compose(
-    connect(MapStateToProps, actions),
+    connect(null, actions),
     reduxForm({
         form: 'jobUpdateForm'
     })

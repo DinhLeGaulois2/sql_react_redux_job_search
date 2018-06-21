@@ -2,8 +2,6 @@ import axios from "axios"
 
 import jobSearchCst from '../constants/jobSearchCst'
 
-import { SERVER_CST } from './types'
-
 const dateAndTime = (expr) => {
     let extension = "AM"
     let v = expr.split("at").map(a => a.trim())
@@ -11,11 +9,11 @@ const dateAndTime = (expr) => {
     d[1] = d[1].length === 1 ? "0" + d[1] : d[1]
     d[2] = d[2].length === 1 ? "0" + d[2] : d[2]
     let t = v[1].split(":")
-    if (parseInt(t[0], 10) < 12){
-        if(parseInt(t[0], 10) < 10)
+    if (parseInt(t[0], 10) < 12) {
+        if (parseInt(t[0], 10) < 10)
             t[0] = "0" + t[0]
     }
-    else{
+    else {
         extension = "PM"
         t[0] -= 12
     }
@@ -35,15 +33,15 @@ const compare = (a, b) => {
     return 0;
 }
 
-const date24hTime = (data) => {    
+const date24hTime = (data) => {
     let v = data.split("at").map(a => a.trim())
     let d = v[0].split("-") //date
     d[1] = d[1].length === 1 ? "0" + d[1] : d[1]
     d[2] = d[2].length === 1 ? "0" + d[2] : d[2]
     let t = v[1].split(":")
     let e = t[1].split(" ").map(a => a.trim())
-    if(e[1] === "PM") t[0] = (parseInt(t[0], 10) + 12).toString();
-    else t[0] = parseInt(t[0], 10).toString().length === 1? "0" +  parseInt(t[0], 10).toString() : parseInt(t[0], 10).toString()// deleting too many 0 as prefix
+    if (e[1] === "PM") t[0] = (parseInt(t[0], 10) + 12).toString();
+    else t[0] = parseInt(t[0], 10).toString().length === 1 ? "0" + parseInt(t[0], 10).toString() : parseInt(t[0], 10).toString()// deleting too many 0 as prefix
 
     e[0] = e[0].length === 1 ? "0" + e[0] : e[0]
     return d[0] + "-" + d[1] + "-" + d[2] + " at " + t[0] + ":" + e[0]
@@ -51,52 +49,25 @@ const date24hTime = (data) => {
 
 const correctAppliedAt = (data) => {
     data.map(a => a.job.appliedAt = date24hTime(a.job.appliedAt))
-    let o = data.sort(compare) 
+    let o = data.sort(compare)
     o.map(a => a.job.appliedAt = dateAndTime(a.job.appliedAt))
     return o
+}
+
+const getAll = () => {
+    return axios.get('http://localhost:3090/api/job/get/all', {
+        headers: {
+            'authorization': localStorage.getItem('token')
+        }
+    })
 }
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 const jobSearchAction = {
-    setUpdate: (jobId) => {
-        return (dispatch) => {
-            dispatch({ type: jobSearchCst.JOB_UPDATE, payload: jobId })
-        }
-    },
-
-    setUpdateCancel: () => {
-        return (dispatch, getState) => {
-            let st = getState()
-            switch (st.jobs.previousStatus) {
-                case jobSearchCst.JOB_DISPLAY_ALL: {
-                    dispatch({ type: jobSearchCst.JOB_DISPLAY_ALL, payload: st.jobs.jobs })
-                    break
-                }
-                case jobSearchCst.JOB_SET_PENDING: {
-                    dispatch({ type: jobSearchCst.JOB_SET_PENDING })
-                    break
-                }
-                case jobSearchCst.JOB_SET_MISSED: {
-                    dispatch({ type: jobSearchCst.JOB_SET_MISSED })
-                    break
-                }
-                case jobSearchCst.JOB_SET_RECENT_FIRST: {
-                    dispatch({
-                        type: jobSearchCst.JOB_SET_RECENT_FIRST,
-                        payload: st.jobs.jobs
-                    })
-                    break
-                }
-                default: dispatch({ type: jobSearchCst.JOB_UPDATE_CANCEL })
-            }
-        }
-    },
-
     setUpdateDone: (data) => {
         return (dispatch, getState) => {
             let obj = getState().jobs.jobs2Display[0]
-            // let st = getState().jobs.jobs
-            obj.job.status = data.isStatusPending === true ? SERVER_CST.JOB_DISPLAY_PENDING : SERVER_CST.JOB_DISPLAY_MISSED
+            obj.job.status = data.isStatusPending === true ? jobSearchCst.DISPLAY_PENDING : jobSearchCst.DISPLAY_MISSED
             obj.job.comment = data.comment
             axios.put('http://localhost:3090/api/job/update/', { id: obj.job.id, comment: obj.job.comment, status: obj.job.status }, {
                 headers: {
@@ -104,48 +75,26 @@ const jobSearchAction = {
                 }
             })
                 .then(result => {
-                    // st.jobs = st.jobs.map(a => a.job.id == obj.jobid ? job : a)
-                    // if (st.previousStatus == jobSearchCst.JOB_DISPLAY_ALL)
-                    //     dispatch({ type: jobSearchCst.JOB_DISPLAY_ALL, payload: st.jobs })
-
-                    // switch (st.previousStatus) {
-                    //     case jobSearchCst.JOB_DISPLAY_ALL: {
-                    //         dispatch({ type: jobSearchCst.JOB_DISPLAY_ALL, payload: st.jobs })
-                    //         break
-                    //     }
-                    //     case jobSearchCst.JOB_SET_PENDING: {
-                    //         dispatch({ type: jobSearchCst.JOB_SET_PENDING })
-                    //         break
-                    //     }
-                    //     case jobSearchCst.JOB_SET_MISSED: {
-                    //         dispatch({ type: jobSearchCst.JOB_SET_MISSED })
-                    //         break
-                    //     }
-                    //     case jobSearchCst.JOB_SET_RECENT_FIRST: {
-                    //         dispatch({
-                    //             type: jobSearchCst.JOB_SET_RECENT_FIRST,
-                    //             payload: st.jobs
-                    //         })
-                    //         break
-                    //     }
-                    // }
-                    dispatch({ type: jobSearchCst.JOB_UPDATE_CANCEL })
+                    getAll().then(response => {
+                        dispatch({
+                            type: jobSearchCst.SET_UPDATE_SUCCESS,
+                            payload: response.data
+                        })
+                    })
+                        .catch(err => console.log("setUpdate: " + err))
                 })
                 .catch(err => console.log("setUpdate: " + err))
         }
     },
 
     addNewJob: (values) => {
-        //KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
-        console.log("client, actions, addnewJob, " + JSON.stringify(SERVER_CST, null, 5))
-        console.log("client, actions, addnewJob, values: " + JSON.stringify(values, null, 5))
         let ob = {
             job: {
                 title: values.j_title,
                 description: values.j_description === undefined ? "" : values.j_description,
                 comment: values.j_comment === undefined ? "" : values.j_comment,
                 appliedAt: dateAndTime(values.j_appliedAt),
-                status: SERVER_CST.JOB_DISPLAY_PENDING,
+                status: jobSearchCst.DISPLAY_PENDING,
                 url: values.j_url
             },
             company: {
@@ -180,49 +129,38 @@ const jobSearchAction = {
                 }
             })
                 .then(data => {
-                    axios.get('http://localhost:3090/api/job/get/all', {
-                        headers: {
-                            'authorization': localStorage.getItem('token')
-                        }
-                    })
-                        .then(result => {
-                            dispatch({
-                                type: jobSearchCst.JOB_ADD,
-                                payload: result.data
-                            })
+                    getAll().then(result => {
+                        dispatch({
+                            type: jobSearchCst.ADD,
+                            payload: result.data
                         })
+                    })
                 }).catch(err => console.log("Add job err: " + err))
         }
     },
 
-    setUI2Display: (status) => {
+    setUI2Display: () => {
         return (dispatch) => {
-            if (status ===jobSearchCst.JOB_DISPLAY_ALL) {
-                axios.get('http://localhost:3090/api/job/get/all', {
-                    headers: {
-                        'authorization': localStorage.getItem('token')
-                    }
+            getAll().then(result => {
+                dispatch({
+                    type: jobSearchCst.SET_DISPLAY,
+                    payload: result.data
                 })
-                    .then(result => {
-                        dispatch({
-                            type: jobSearchCst.JOB_DISPLAY_ALL,
-                            payload: result.data
-                        })
-                    })
-            }
-            else dispatch({ type: jobSearchCst.JOB_DISPLAY_ALL, payload: status })
+            })
         }
     },
 
     setShowAJob: (jobId) => {
         return (dispatch) => {
-            dispatch({ type: jobSearchCst.SET_DISPLAY_NOT_LIST, payload: jobId })
+            dispatch({ type: jobSearchCst.SET_DISPLAY_ONE_JOB, payload: jobId })
         }
     },
 
     sortCompanyByName: () => {
         return (dispatch, getState) => {
             let st = getState().jobs.jobs2Display
+            //KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
+            console.log("actions, sortCompanyByName: " + JSON.stringify(st, null ,5))
             st.sort(function (a, b) {
                 var nameA = a.company.name.toLowerCase(), nameB = b.company.name.toLowerCase()
                 if (nameA < nameB) //sort string ascending
@@ -232,54 +170,31 @@ const jobSearchAction = {
                 return 0 //default return value (no sorting)
             })
             dispatch({
-                type: jobSearchCst.JOB_SET_SORT_COMPANY_BY_NAME,
+                type: jobSearchCst.DISPLAY_SORT_COMPANY_BY_NAME,
                 payload: st
             })
         }
     },
 
     setCloseAJob: () => {
-        return (dispatch, getState) => {
-            let st = getState()
-            switch (st.jobs.previousStatus) {
-                case jobSearchCst.JOB_DISPLAY_ALL: {
-                    dispatch({ type: jobSearchCst.JOB_DISPLAY_ALL, payload: st.jobs.jobs })
-                    break
-                }
-                case jobSearchCst.JOB_SET_PENDING: {
-                    dispatch({ type: jobSearchCst.JOB_SET_PENDING })
-                    break
-                }
-                case jobSearchCst.JOB_SET_MISSED: {
-                    dispatch({ type: jobSearchCst.JOB_SET_MISSED })
-                    break
-                }
-                case jobSearchCst.JOB_SET_RECENT_FIRST: {
-                    dispatch({
-                        type: jobSearchCst.JOB_SET_RECENT_FIRST,
-                        payload: st.jobs.jobs
-                    })
-                    break
-                }
-                default: dispatch({ type: jobSearchCst.SET_DISPLAY_NOT_LIST_CLOSE })
-            }
-        }
+        return dispatch => dispatch({ type: jobSearchCst.SET_DISPLAY_LIST })
     },
 
     set2ShowPending: () => {
         return (dispatch) => {
-            dispatch({ type: jobSearchCst.JOB_SET_PENDING })
+            dispatch({ type: jobSearchCst.DISPLAY_PENDING })
         }
     },
 
     set2ShowMissed: () => {
         return (dispatch) => {
-            dispatch({ type: jobSearchCst.JOB_SET_MISSED })
+            dispatch({ type: jobSearchCst.DISPLAY_MISSED })
         }
     },
 
     set2ShowRecentFirst: () => {
         return (dispatch) => {
+
             axios.get('http://localhost:3090/api/job/get/recent', {
                 headers: {
                     'authorization': localStorage.getItem('token')
@@ -287,7 +202,7 @@ const jobSearchAction = {
             })
                 .then(result => {
                     dispatch({
-                        type: jobSearchCst.JOB_SET_RECENT_FIRST,
+                        type: jobSearchCst.DISPLAY_RECENT_FIRST,
                         payload: correctAppliedAt(result.data)
                     })
                 })
@@ -296,17 +211,9 @@ const jobSearchAction = {
 
     set2ShowAll: () => {
         return (dispatch) => {
-            axios.get('http://localhost:3090/api/job/get/all', {
-                headers: {
-                    'authorization': localStorage.getItem('token')
-                }
+            dispatch({
+                type: jobSearchCst.DISPLAY_ALL,
             })
-                .then(result => {
-                    dispatch({
-                        type: jobSearchCst.JOB_DISPLAY_ALL,
-                        payload: result.data
-                    })
-                })
         }
     }
 }

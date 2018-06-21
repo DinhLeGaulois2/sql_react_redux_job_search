@@ -2,10 +2,17 @@ import React from 'react'
 import { Route, NavLink } from "react-router-dom";
 import requireAuth from '../requireAuth'
 import '../HeaderStyle.css';
+import { connect } from 'react-redux'
+import actions from '../../actions/jobSearchAction'
 
 import DisplayAllComponent from './DisplayAllComponent'
 
 class DisplayUIComponent extends React.Component {
+    constructor(props) {
+        super(props)
+        this.props.setUI2Display()
+    }
+    
     render() {
         const { match } = this.props
         return (
@@ -21,7 +28,7 @@ class DisplayUIComponent extends React.Component {
                     </p>
                     <br />
                 </div>
-    
+
                 <Route path={`${match.url}/all`} exact component={DisplayAllComponent} />
                 <Route path={`${match.url}/missed`} exact component={DisplayAllComponent} />
                 <Route path={`${match.url}/pending`} exact component={DisplayAllComponent} />
@@ -32,4 +39,4 @@ class DisplayUIComponent extends React.Component {
     }
 }
 
-export default requireAuth(DisplayUIComponent)
+export default connect(null, actions)(requireAuth(DisplayUIComponent))

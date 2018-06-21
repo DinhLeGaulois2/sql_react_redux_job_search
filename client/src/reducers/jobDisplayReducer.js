@@ -1,11 +1,11 @@
-import jobSearchCst from '../constants/jobSearchCst'
+import cst from '../constants/jobSearchCst'
 
 import { SERVER_CST } from '../actions/types'
 
 const getGoodList = (list, op) => {
     let result = []
-    if(op === jobSearchCst.JOB_DISPLAY_MISSED){ result = list.filter(a => a.job.status === SERVER_CST.JOB_DISPLAY_MISSED ? a : null)}    
-    else if(op === jobSearchCst.JOB_DISPLAY_PENDING){ result = list.filter(a => a.job.status === SERVER_CST.JOB_DISPLAY_PENDING ? a : null)} 
+    if(op === cst.DISPLAY_MISSED){ result = list.filter(a => a.job.status === SERVER_CST.DISPLAY_MISSED ? a : null)}    
+    else if(op === cst.DISPLAY_PENDING){ result = list.filter(a => a.job.status === SERVER_CST.DISPLAY_PENDING ? a : null)} 
     else result = Object.assign({}, list)
     return result
 }
@@ -17,58 +17,71 @@ const jobDisplayReducer = (state = {
     isList: true
 }, action) => {
     switch (action.type) {
-        case jobSearchCst.SET_DISPLAY_NOT_LIST:{
-            return state.isList = false
-        }
-        case jobSearchCst.JOB_ADD: {
+        case cst.ADD : {
             return Object.assign({}, state, {
-                jobs: action.payload,
-                jobs2Display: getGoodList(action.payload, state.status),
+                jobs: action.payload, // All Jobs
+            })
+        }
+        case cst.GET_ALL : {
+            return Object.assign({}, state, {
+                jobs: action.payload, // All Jobs
+            })
+        }
+        case cst.DISPLAY_ALL : {
+            return Object.assign({}, state, {
+                jobs2Display: state.jobs,
+                status: action.type,
                 isList: true
             })
         }
-        case jobSearchCst.JOB_UPDATE: {
+        case cst.DISPLAY_PENDING : {
             return Object.assign({}, state, {
-                jobs: action.payload,
-                jobs2Display: getGoodList(action.payload, state.status),
+                jobs2Display: state.jobs.filter(a => a.job.status === cst.DISPLAY_PENDING ? a : null),
+                status: action.type,
                 isList: true
             })
         }
-        case jobSearchCst.JOB_DISPLAY_ALL: {
+        case cst.DISPLAY_MISSED : {
             return Object.assign({}, state, {
-                jobs: action.payload,
-                jobs2Display: action.payload,
-                status: jobSearchCst.JOB_DISPLAY_LIST,
+                jobs2Display: state.jobs.filter(a => a.job.status === cst.DISPLAY_MISSED ? a : null),
+                status: action.type,
                 isList: true
             })
         }
-        case jobSearchCst.JOB_DISPLAY_PENDING: {
-            return Object.assign({}, state, {
-                jobs2Display: state.jobs.filter(a => a.job.status === SERVER_CST.JOB_DISPLAY_PENDING ? a : null),
-                status: jobSearchCst.JOB_DISPLAY_PENDING,
-                isList: true
-            })
-        }
-        case jobSearchCst.JOB_DISPLAY_MISSED: {
-            return Object.assign({}, state, {
-                jobs2Display: state.jobs.filter(a => a.job.status === SERVER_CST.JOB_DISPLAY_MISSED ? a : null),
-                status: jobSearchCst.JOB_DISPLAY_MISSED,
-                isList: true
-            })
-        }
-        case jobSearchCst.JOB_DISPLAY_SORT_COMPANY_BY_NAME: {
+        case cst.DISPLAY_BY_COMPANY_NAME : {
             return Object.assign({}, state, {
                 jobs2Display: action.payload,
-                status: jobSearchCst.JOB_DISPLAY_SORT_COMPANY_BY_NAME,
+                status: action.type,
                 isList: true
             })
         }
-        case jobSearchCst.JOB_DISPLAY_RECENT_FIRST: {
+        case cst.DISPLAY_RECENT_FIRST : {
+            return Object.assign({}, state, {
+                jobs2Display: action.payload,
+                status: action.type,
+                isList: true
+            })
+        }
+        case cst.SET_DISPLAY_ONE_JOB : {
+            return Object.assign({}, state, {
+                jobs2Display: state.jobs.filter(a => a.job.id === action.payload ? a : null),
+                isList: false
+            })
+        }
+        case cst.SET_UPDATE_SUCCESS : {
             return Object.assign({}, state, {
                 jobs: action.payload,
-                jobs2Display: action.payload,
-                status: jobSearchCst.JOB_DISPLAY_RECENT_FIRST,
+                jobs2Display: getGoodList(state.jobs, state.status),
+            })
+        }
+        case cst.SET_DISPLAY_AS_LIST : {
+            return Object.assign({}, state, {
                 isList: true
+            })
+        }
+        case cst.SET_DISPLAY : {
+            return Object.assign({}, state, {
+                jobs: action.payload,
             })
         }
         default: return state
