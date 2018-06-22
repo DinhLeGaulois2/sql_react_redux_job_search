@@ -167,8 +167,6 @@ module.exports = function (app) {
     })
 
     app.put('/api/job/update', requireAuth, (req, res) => {
-        //KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
-        console.log("api/job/update, data: " + JSON.stringify(req.body, null, 5))
         db.job.findOne({ where: { id: req.body.id } })
             .then(aJob => {
                 aJob.updateAttributes({
