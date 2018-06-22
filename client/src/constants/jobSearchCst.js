@@ -12,7 +12,14 @@ const jobSearchCst = {
     
     SET_DISPLAY : "set_display",
     SET_DISPLAY_ONE_JOB: "set_display_one_job",
-    SET_DISPLAY_AS_LIST: "set_display_as_list"
+    SET_DISPLAY_UPDATE: "set_display_update",
+    UPDATE_SUCCESS: "update_success",
+    SET_DISPLAY_AS_LIST: "set_display_as_list",
+    SET_DISPLAY_ONE2ALL: "set_display_one2all",
+
+    
+    JOB_STATUS_PENDING: "JOB_STATUS_PENDING",
+    JOB_STATUS_MISSED: "JOB_STATUS_MISSED",
 }
 
 export default jobSearchCst

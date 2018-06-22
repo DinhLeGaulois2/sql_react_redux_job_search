@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import actions from '../../actions/jobSearchAction'
 import requireAuth from '../requireAuth'
+import DisplayAJobComponent from './DisplayAJobComponent'
 
 import cst from '../../constants/jobSearchCst'
 
@@ -23,8 +24,8 @@ const ShortJobDescription = ({ job, company, setShowAJob, index }) =>
                 &nbsp;{company.companyLocations[0].town.replace(/(\b\w)/gi, function (m) { return m.toUpperCase(); })},
                 &nbsp;<b>{company.companyLocations[0].state.replace(/(\b\w)/gi, function (m) { return m.toUpperCase(); })}</b><br />
                 &nbsp;(Applied on: {date2DisplayWithMonthInWord(job.appliedAt)}
-                {job.status === cst.DISPLAY_PENDING && <span>, status: <font color="orange"><b>Pending</b></font></span>}
-                {job.status !== cst.DISPLAY_PENDING && <span>, status: <font color="orange"><b>Missed/No Longer Exists</b></font></span>} )
+                {job.status === cst.JOB_STATUS_PENDING && <span>, status: <font color="orange"><b>Pending</b></font></span>}
+                {job.status !== cst.JOB_STATUS_PENDING && <span>, status: <font color="orange"><b>Missed/No Longer Exists</b></font></span>} )
             </div>
         </td>
     </tr>
@@ -34,8 +35,6 @@ class DisplayAllComponent extends React.Component {
         super(props)
         const thisPath = this.props.location.pathname.split("/")
         const last = thisPath.length > 0 ? thisPath[thisPath.length - 1] : ""
-        //KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
-        console.log("DisplayAllComponent, last: " + last)
         if (last === 'all') { this.props.set2ShowAll() }
         else if (last === 'missed') { this.props.set2ShowMissed() }
         else if (last === 'pending') { this.props.set2ShowPending() }
@@ -44,10 +43,10 @@ class DisplayAllComponent extends React.Component {
     }
 
     render() {
-        const { jobs, setShowAJob } = this.props
+        const { jobs, setShowAJob, isList } = this.props
         return (
             <div>
-                {jobs !== undefined &&
+                {isList && jobs !== undefined &&
                     <div>
                         {
                             jobs.length > 0 &&
@@ -72,13 +71,19 @@ class DisplayAllComponent extends React.Component {
                         }
                     </div>
                 }
+                {!isList &&
+                    <div>
+                        <DisplayAJobComponent />
+                    </div>
+                }
             </div>
         )
     }
 }
 
 const MapStateToProps = (state) => ({
-    jobs: state.jobs.jobs2Display
+    jobs: state.jobs.jobs2Display,
+    isList: state.jobs.isList,
 })
 
 export default connect(

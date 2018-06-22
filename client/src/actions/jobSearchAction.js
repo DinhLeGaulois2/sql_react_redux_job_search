@@ -64,27 +64,31 @@ const getAll = () => {
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 const jobSearchAction = {
-    setUpdateDone: (data) => {
+    updateDone: (data) => {
         return (dispatch, getState) => {
             let obj = getState().jobs.jobs2Display[0]
-            obj.job.status = data.isStatusPending === true ? jobSearchCst.DISPLAY_PENDING : jobSearchCst.DISPLAY_MISSED
-            obj.job.comment = data.comment
+            obj.job.status = data.isStatusPending === true ? jobSearchCst.JOB_STATUS_PENDING : jobSearchCst.JOB_STATUS_MISSED
+            obj.job.comment = data.comment === undefined ? "" : data.comment
             axios.put('http://localhost:3090/api/job/update/', { id: obj.job.id, comment: obj.job.comment, status: obj.job.status }, {
                 headers: {
                     'authorization': localStorage.getItem('token')
                 }
             })
-                .then(result => {
-                    getAll().then(response => {
-                        dispatch({
-                            type: jobSearchCst.SET_UPDATE_SUCCESS,
-                            payload: response.data
-                        })
+                .then(result => {                    
+                    //KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
+                    console.log("actions, updateDone: " + JSON.stringify(result, null, 5))
+                    const obj2array = []
+                    obj2array.push(obj)
+                    dispatch({
+                        type: jobSearchCst.UPDATE_SUCCESS,
+                        payload: obj2array
                     })
-                        .catch(err => console.log("setUpdate: " + err))
                 })
-                .catch(err => console.log("setUpdate: " + err))
         }
+    },
+
+    setDisplayUpdate: () => {
+        return dispatch => dispatch({ type: jobSearchCst.SET_DISPLAY_UPDATE })
     },
 
     addNewJob: (values) => {
@@ -94,7 +98,7 @@ const jobSearchAction = {
                 description: values.j_description === undefined ? "" : values.j_description,
                 comment: values.j_comment === undefined ? "" : values.j_comment,
                 appliedAt: dateAndTime(values.j_appliedAt),
-                status: jobSearchCst.DISPLAY_PENDING,
+                status: jobSearchCst.JOB_STATUS_PENDING,
                 url: values.j_url
             },
             company: {
@@ -159,8 +163,6 @@ const jobSearchAction = {
     sortCompanyByName: () => {
         return (dispatch, getState) => {
             let st = getState().jobs.jobs2Display
-            //KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
-            console.log("actions, sortCompanyByName: " + JSON.stringify(st, null ,5))
             st.sort(function (a, b) {
                 var nameA = a.company.name.toLowerCase(), nameB = b.company.name.toLowerCase()
                 if (nameA < nameB) //sort string ascending
@@ -176,8 +178,8 @@ const jobSearchAction = {
         }
     },
 
-    setCloseAJob: () => {
-        return dispatch => dispatch({ type: jobSearchCst.SET_DISPLAY_LIST })
+    setOne2All: () => {
+        return dispatch => dispatch({ type: jobSearchCst.SET_DISPLAY_ONE2ALL })
     },
 
     set2ShowPending: () => {

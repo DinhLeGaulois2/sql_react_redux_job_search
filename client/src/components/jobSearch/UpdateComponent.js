@@ -4,15 +4,16 @@ import { reduxForm, Field } from 'redux-form'
 import actions from '../../actions/jobSearchAction'
 import requireAuth from '../../components/requireAuth';
 import { compose } from 'redux'
+import cst from '../../constants/jobSearchCst'
 
 import { renderTextareaField } from '../../common/reduxForm/renderField'
 
 class JobSearchUpdateComponent extends React.Component {
     render() {
-        const { handleSubmit, invalid, submitting, reset, setUpdateDone } = this.props
+        const { handleSubmit, invalid, submitting, reset, updateDone } = this.props
         return (
-            <div style={{ 'backgroundColor': 'white' }} className="jobdetails">
-                <form onSubmit={handleSubmit(setUpdateDone)}>
+            <div style={{ 'backgroundColor': 'white' }} className=" container jobdetails">
+                <form onSubmit={handleSubmit(updateDone)}>
                     <div>
                         <Field name="comment" component={renderTextareaField} placeholder="Comment" /><br />
                         <h3>Pending: <Field name="isStatusPending" component="input" type="checkbox" /></h3>
@@ -27,20 +28,14 @@ class JobSearchUpdateComponent extends React.Component {
     }
 }
 
-JobSearchUpdateComponent = reduxForm({
-    form: 'jobUpdateForm'
-})(JobSearchUpdateComponent)
-
-JobSearchUpdateComponent = connect(
-    state => ({
-        initialValues: {
-            comment: state.jobs.jobs2Display[0].job.comment,
-            isStatusPending: state.jobs.jobs2Display[0].job.status == "STATUS_PENDING" ? true : false
-        }
-    })
-)(JobSearchUpdateComponent)
 export default compose(
-    connect(null, actions),
+    connect(
+        state => ({
+            initialValues: {
+                comment: state.jobs.jobs2Display[0].job.comment,
+                isStatusPending: state.jobs.jobs2Display[0].job.status === cst.JOB_STATUS_PENDING ? true : false
+            }
+        }), actions),
     reduxForm({
         form: 'jobUpdateForm'
     })
