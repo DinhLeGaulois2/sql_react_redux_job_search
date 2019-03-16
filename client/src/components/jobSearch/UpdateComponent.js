@@ -16,6 +16,7 @@ class JobSearchUpdateComponent extends React.Component {
                 <form onSubmit={handleSubmit(updateDone)}>
                     <div>
                         <Field name="comment" component={renderTextareaField} placeholder="Comment" /><br />
+                        <Field name="description" component={renderTextareaField} placeholder="Description" /><br />
                         <h3>Pending: <Field name="isStatusPending" component="input" type="checkbox" /></h3>
                     </div>
                     <hr />
@@ -33,6 +34,7 @@ export default compose(
         state => ({
             initialValues: {
                 comment: state.jobs.jobs2Display[0].job.comment,
+                description: state.jobs.jobs2Display[0].job.description,
                 isStatusPending: state.jobs.jobs2Display[0].job.status === cst.JOB_STATUS_PENDING ? true : false
             }
         }), actions),

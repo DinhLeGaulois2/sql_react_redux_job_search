@@ -18,7 +18,7 @@ const date2DisplayWithMonthInWord = (d) => {
 const ShortJobDescription = ({ job, company, setShowAJob, index }) =>
     <tr>
         <td style={{ 'padding': '10px' }}>
-            <div onClick={e => { setShowAJob(job.id) }} className="jobsField">
+            <div onClick={e => { setShowAJob(job.id) }} className="toOpen1Job">
                 {index}. <font color="#308cf2"><b>{job.title.replace(/(\b\w)/gi, function (m) { return m.toUpperCase(); })}</b></font>  -
                 &nbsp;{company.name.replace(/(\b\w)/gi, function (m) { return m.toUpperCase(); })} -
                 &nbsp;{company.companyLocations[0].town.replace(/(\b\w)/gi, function (m) { return m.toUpperCase(); })},

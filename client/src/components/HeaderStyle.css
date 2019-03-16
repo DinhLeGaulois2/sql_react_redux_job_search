@@ -18,3 +18,14 @@
   padding: 5 10px;
   border-radius: 5px;
 }
+
+.toOpen1Job:hover{
+  border: 1px black solid;
+  background-color: #cbd5d9;
+  border-radius: 7px;
+}
+
+.toOpen1Job{
+  cursor: pointer;
+  padding: 5px;
+}

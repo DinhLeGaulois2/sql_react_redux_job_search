@@ -49,7 +49,7 @@ const jobDisplayReducer = (state = {
                 isList: true,
             })
         }
-        case cst.DISPLAY_BY_COMPANY_NAME : {
+        case cst.DISPLAY_SORT_COMPANY_BY_NAME : {
             return Object.assign({}, state, {
                 jobs2Display: action.payload,
                 status: action.type,

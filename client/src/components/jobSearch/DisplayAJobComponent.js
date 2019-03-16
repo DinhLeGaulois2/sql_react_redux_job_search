@@ -6,7 +6,7 @@ import requireAuth from '../requireAuth'
 import UpdateComponent from './UpdateComponent'
 
 const jobStatusConverter = (expr) => {
-    if (expr === "STATUS_PENDING") return "Pending"
+    if (expr === "JOB_STATUS_PENDING") return "Pending"
     return "Missed/No Longer Exsists"
 }
 

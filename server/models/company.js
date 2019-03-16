@@ -11,12 +11,6 @@ module.exports = function (sequelize, Sequelize) {
                 notEmpty: true,
             }
         },
-        type: {
-            type: Sequelize.STRING,
-            validate: {
-                notEmpty: true,
-            }
-        }
     });
 
     return Company;

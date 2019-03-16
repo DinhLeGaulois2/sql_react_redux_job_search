@@ -27,7 +27,7 @@ class Signin extends Component {
     return (
       <div className="container">
         <h1 align="center" style={{backgroundColor: 'black', width: '100%', padding: '10px', borderRadius: "10px"}}><font color="cyan">Sign In</font></h1>
-        <form onSubmit={handleSubmit(this.onSubmit)}>
+        <form onSubmit={handleSubmit(this.onSubmit)} autoComplete="off">
           <Field
             name="email"
             component={renderInputField}

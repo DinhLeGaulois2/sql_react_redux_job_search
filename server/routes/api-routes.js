@@ -10,7 +10,7 @@ module.exports = function (app) {
     app.post("/api/job/add", requireAuth, (req, res) => {
         if (req.body.company.name.length) {
             let source = req.body.company;
-            db.company.findOrCreate({ where: { name: source.name, type: source.type } })
+            db.company.findOrCreate({ where: { name: source.name } })
                 .then(data => {
                     let companyId = data[0].id;
 
@@ -89,7 +89,7 @@ module.exports = function (app) {
                             .then(data => {
                                 db.company.findAll({
                                     where: { id: data[0].companyId },
-                                    attributes: ['name', 'type'],
+                                    attributes: ['name'],
                                     include: [
                                         {
                                             model: db.contactPerson,
@@ -136,7 +136,7 @@ module.exports = function (app) {
                             .then(data => {
                                 db.company.findAll({
                                     where: { id: data[0].companyId },
-                                    attributes: ['name', 'type'],
+                                    attributes: ['name'],
                                     include: [
                                         {
                                             model: db.contactPerson,

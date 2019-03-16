@@ -16,7 +16,7 @@ import Signin from './components/auth/Signin';
 const store = createStore(
   reducers,
   { // initiation of "auth's" value
-    auth: { authenticated: localStorage.getItem('token') }
+    auth: { authenticated: localStorage.removeItem('token') }
   },
   applyMiddleware(reduxThunk)
 );

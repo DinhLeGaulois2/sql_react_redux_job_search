@@ -34,16 +34,17 @@ db.user = require('../models/user.js')(sequelize, Sequelize)
 
 //Relations
 // ===> n-m relationships
-db.job.hasMany(db.jobCompany, { onDelete: 'cascade' });
+db.job.hasMany(db.jobCompany, { onDelete: 'cascade', hooks: true });
 db.jobCompany.belongsTo(db.job);
+
+db.company.hasMany(db.jobCompany, { onDelete: 'cascade', hooks: true })
 db.jobCompany.belongsTo(db.company);
-db.company.hasMany(db.jobCompany, { onDelete: 'cascade' })
 //Relations
 // ===> 1-n relationships
-db.company.hasMany(db.contactPerson, { onDelete: 'cascade' });
+db.company.hasMany(db.contactPerson, { onDelete: 'cascade', hooks: true });
 db.contactPerson.belongsTo(db.company);
 
-db.company.hasMany(db.companyLocation, { onDelete: 'cascade' });
+db.company.hasMany(db.companyLocation, { onDelete: 'cascade', hooks: true });
 db.companyLocation.belongsTo(db.company);
 
 module.exports = db;

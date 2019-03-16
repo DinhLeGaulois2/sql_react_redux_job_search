@@ -68,15 +68,14 @@ const jobSearchAction = {
         return (dispatch, getState) => {
             let obj = getState().jobs.jobs2Display[0]
             obj.job.status = data.isStatusPending === true ? jobSearchCst.JOB_STATUS_PENDING : jobSearchCst.JOB_STATUS_MISSED
-            obj.job.comment = data.comment === undefined ? "" : data.comment
+            obj.job.comment = data.comment === undefined ? "" : data.comment,
+            obj.job.description = data.description === undefined ? "" : data.description
             axios.put('http://localhost:3090/api/job/update/', { id: obj.job.id, comment: obj.job.comment, status: obj.job.status }, {
                 headers: {
                     'authorization': localStorage.getItem('token')
                 }
             })
                 .then(result => {                    
-                    //KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK
-                    console.log("actions, updateDone: " + JSON.stringify(result, null, 5))
                     const obj2array = []
                     obj2array.push(obj)
                     dispatch({
@@ -103,7 +102,6 @@ const jobSearchAction = {
             },
             company: {
                 name: values.comp_name,
-                type: values.comp_type,
                 companyLocation: {
                     town: values.loc_town,
                     state: values.loc_state
@@ -125,7 +123,6 @@ const jobSearchAction = {
                 phone: values.cont_phone === undefined ? "" : values.cont_phone,
             }
         }
-
         return dispatch => {
             axios.post('http://localhost:3090/api/job/add', ob, {
                 headers: {
@@ -162,7 +159,7 @@ const jobSearchAction = {
 
     sortCompanyByName: () => {
         return (dispatch, getState) => {
-            let st = getState().jobs.jobs2Display
+            let st = getState().jobs.jobs
             st.sort(function (a, b) {
                 var nameA = a.company.name.toLowerCase(), nameB = b.company.name.toLowerCase()
                 if (nameA < nameB) //sort string ascending

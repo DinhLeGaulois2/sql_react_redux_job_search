@@ -22,11 +22,6 @@ const validate = values => {
     if (!values.loc_town) {
         errors.loc_town = "Required"
     }
-    if (values.comp_name) {
-        if (!values.comp_type || values.comp_type === 'Please Select the Type') {
-            errors.comp_type = 'Required'
-        }
-    }
     if (!values.j_appliedAt) {
         errors.j_appliedAt = 'Required'
     }
@@ -38,8 +33,8 @@ const validate = values => {
     return errors
 }
 
-class JobSearchAddComponent extends React.Component{
-    render(){
+class JobSearchAddComponent extends React.Component {
+    render() {
         const { handleSubmit, invalid, submitting, reset, hasContactValue, cName, lTown, selectType, selectState, addNewJob } = this.props
         return (
             <div className="container" style={{ 'backgroundColor': 'white' }}>
@@ -55,7 +50,7 @@ class JobSearchAddComponent extends React.Component{
                     'margin': '20px 0px'
                 }}>Add New Job</div>
 
-                <form onSubmit={handleSubmit(addNewJob)}>
+                <form onSubmit={handleSubmit(addNewJob)} autoComplete="off">
                     <div>
                         <Field name="j_title" component={renderInputField} placeholder="Job's Title" /><br />
                         <Field name="j_description" component={renderTextareaField} placeholder="Description" /><br />
@@ -68,21 +63,6 @@ class JobSearchAddComponent extends React.Component{
                         <label>Company's Name</label>&nbsp;
                 {!cName && <span>&nbsp;(<font color="red">required</font>)</span>}
                         <Field name="comp_name" component="input" placeholder="Company Name" className="form-control" />
-                        {cName &&
-                            <div>
-                                <br />
-                                <label>What kind of Company?</label>  &nbsp;
-                        <Field name="comp_type" component="select">
-                                    <option></option>
-                                    <option key={cst.COMPANY_TYPE_JOBS_NO_IDEA} value={cst.COMPANY_TYPE_JOBS_NO_IDEA} >Not Sure</option>
-                                    <option key={cst.COMPANY_TYPE_JOBS_LISTER} value={cst.COMPANY_TYPE_JOBS_LISTER} >Job Lister</option>
-                                    <option key={cst.COMPANY_TYPE_HIRING} value={cst.COMPANY_TYPE_HIRING}>Direct Hiring</option>
-                                </Field> &nbsp;
-                        {(selectType === undefined || selectType === 'Please Select the Type') &&
-                                    <span>&nbsp;(<font color="red">required</font>)</span>
-                                }
-                            </div>
-                        }
                         <br /><br />
                         <label>Town</label>&nbsp;
                 {!lTown && <span>&nbsp;(<font color="red">required</font>)</span>}
@@ -149,9 +129,8 @@ export default compose(
             const hasContactValue = selector(state, 'hasContact');
             const cName = selector(state, 'comp_name');
             const lTown = selector(state, 'loc_town');
-            const selectType = selector(state, 'comp_type')
             const selectState = selector(state, 'loc_state')
-            return { hasContactValue, cName, lTown, selectType, selectState }
+            return { hasContactValue, cName, lTown, selectState }
         }, actions),
     reduxForm({
         form: 'jobAddForm',
